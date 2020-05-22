@@ -18,10 +18,27 @@
 
 #include <Joystick.h>
 
+Joystick_ Pedals(
+  JOYSTICK_DEFAULT_REPORT_ID, //hidReportId
+  JOYSTICK_TYPE_GAMEPAD, //joystickType
+  0, //buttonCount 
+  0, //hatSwitchCount
+  true, //includeXAxis -> Gas
+  true, //includeYAxis -> Brake
+  true, //includeZAxis -> Clutch
+  false, //includeRxAxis 
+  false, //includeRyAxis 
+  false, //includeRzAxis
+  false, //includeRudder 
+  false, //includeThrottle 
+  false, //includeAccelerator 
+  false, //includeBrake 
+  false); //includeSteering
+
 // Variable
 int gas = A0;
 int brake = A1; 
-int clutch = A2;
+int clutch = A3;
 int gasValue = 0;
 int gasValuebyte = 0;
 int brakeValue = 0;
@@ -30,10 +47,11 @@ int brakeValuebyte2 = 0;
 int clutchValue = 0;
 int clutchValuebyte1 = 0;
 int clutchValuebyte2 = 0;
-
+int clutchValue5V = 512;
 // init joystick libary
 void setup() {
-  Joystick.begin();
+  Pedals.begin();
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -47,7 +65,7 @@ void loop() {
    {
     gasValuebyte = 0 ;
    }
-  Joystick.setThrottle(gasValuebyte);
+  Pedals.setXAxis(gasValuebyte);
   delay(1); 
 
   // Brake
@@ -61,7 +79,7 @@ void loop() {
    {
     brakeValuebyte2 = -127;
    }
-  Joystick.setYAxis(brakeValuebyte2);
+  Pedals.setYAxis(brakeValuebyte2);
   delay(1); 
 
   // Clutch
@@ -69,12 +87,22 @@ void loop() {
   if (clutchValue >= 1) {
   clutchValuebyte1 = clutchValue / 4;
   clutchValuebyte2 = clutchValuebyte1 - 127;
-  
+  clutchValue5V = clutchValue - 500;
    }
    else
    {
     clutchValuebyte2 = -127;
    }
-   Joystick.setZAxis(clutchValuebyte2);
+
+   if (clutchValue > 512) {
+    clutchValue5V = clutchValue - 512; 
+   }
+   else
+   {
+    clutchValue5V = 0;
+   }
+   Pedals.setZAxis(clutchValue5V);
+   Serial.println(clutchValue);
+   //Serial.println(clutchValue5V);
   delay(1); 
 }
