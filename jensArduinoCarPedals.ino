@@ -84,25 +84,34 @@ void loop() {
 
   // Clutch
   clutchValue = analogRead(clutch);
-  if (clutchValue >= 1) {
-  clutchValuebyte1 = clutchValue / 4;
-  clutchValuebyte2 = clutchValuebyte1 - 127;
-  clutchValue5V = clutchValue - 500;
-   }
-   else
-   {
-    clutchValuebyte2 = -127;
-   }
+//  if (clutchValue >= 1) {
+//  clutchValuebyte1 = clutchValue / 4;
+//  clutchValuebyte2 = clutchValuebyte1 - 127;
+//   }
+//   else
+//   {
+//    clutchValuebyte2 = -127;
+//   }
 
-   if (clutchValue > 512) {
-    clutchValue5V = clutchValue - 512; 
-   }
-   else
-   {
+//   When there is a 2.5V voltage offset:
+//   if (clutchValue > 512) {
+//    clutchValue5V = clutchValue - 512; 
+//   }
+//   else
+//   {
+//    clutchValue5V = 0;
+//   }
+
+// TODO: Automatic offset and maximum value adaptation
+// Take all positive voltage values
+   if (clutchValue >= 0) {
+     clutchValue5V = clutchValue;
+   } else {
     clutchValue5V = 0;
    }
+   
    Pedals.setZAxis(clutchValue5V);
-   Serial.println(clutchValue);
+   //Serial.println(clutchValue);
    //Serial.println(clutchValue5V);
   delay(1); 
 }
