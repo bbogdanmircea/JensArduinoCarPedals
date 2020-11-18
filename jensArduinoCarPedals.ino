@@ -36,8 +36,8 @@ Joystick_ Pedals(
   false); //includeSteering
 
 // Variable
-int gas = A0;
-int brake = A1; 
+int gas = A1;
+int brake = A2; 
 int clutch = A3;
 int gasValue = 0;
 int gasValuebyte = 0;
@@ -48,6 +48,8 @@ int clutchValue = 0;
 int clutchValuebyte1 = 0;
 int clutchValuebyte2 = 0;
 int clutchValue5V = 512;
+int brakeValue5V = 0;
+int gasValue5V = 0;
 // init joystick libary
 void setup() {
   Pedals.begin();
@@ -58,29 +60,50 @@ void loop() {
   
   // Gas
   gasValue = analogRead(gas);
-  if (gasValue >= 1) {
-  gasValuebyte = gasValue / 4 ;
+//  if (gasValue >= 1) {
+//  gasValuebyte = gasValue / 4 ;
+//   }
+//   else
+//   {
+//    gasValuebyte = 0 ;
+//   }
+//  Pedals.setXAxis(gasValuebyte);
+
+// TODO: Automatic offset and maximum value adaptation
+// Take all positive voltage values
+   if (gasValue >= 0) {
+     gasValue5V = gasValue;
+   } else {
+    gasValue5V = 0;
    }
-   else
-   {
-    gasValuebyte = 0 ;
-   }
-  Pedals.setXAxis(gasValuebyte);
+  Pedals.setXAxis(gasValue5V);
+
   delay(1); 
 
   // Brake
   brakeValue = analogRead(brake);
-  if (brakeValue >= 1) {
-    brakeValuebyte1 = brakeValue / 4;
-    brakeValuebyte2 = brakeValuebyte1 - 127;
-  
+//  if (brakeValue >= 1) {
+//    brakeValuebyte1 = brakeValue / 4;
+//    brakeValuebyte2 = brakeValuebyte1 - 127;
+//  
+//   }
+//   else
+//   {
+//    brakeValuebyte2 = -127;
+//   }
+//  Pedals.setYAxis(brakeValuebyte2);
+
+// TODO: Automatic offset and maximum value adaptation
+// Take all positive voltage values
+   if (brakeValue >= 0) {
+     brakeValue5V = brakeValue;
+   } else {
+    brakeValue5V = 0;
    }
-   else
-   {
-    brakeValuebyte2 = -127;
-   }
-  Pedals.setYAxis(brakeValuebyte2);
-  delay(1); 
+  Pedals.setYAxis(brakeValue5V);
+
+  delay(1);
+
 
   // Clutch
   clutchValue = analogRead(clutch);
@@ -111,7 +134,14 @@ void loop() {
    }
    
    Pedals.setZAxis(clutchValue5V);
+
+   delay(1);
+
+   //Debug values
    //Serial.println(clutchValue);
    //Serial.println(clutchValue5V);
-  delay(1); 
+   Serial.println(brakeValue);
+   Serial.println(brakeValue5V);
+   //Serial.println(gasValue);
+   //Serial.println(gasValue5V); 
 }
